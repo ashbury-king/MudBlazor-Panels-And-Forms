@@ -7,12 +7,12 @@
         <MudGrid>
             <MudItem>
                 <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 mud-theme-secondary">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
                         @previewModel["FirstName"].ToString()
                     </MudButton>
                     @if(@previewModel["City"] != null)
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
                             @(previewModel["FirstName"].ToString() + "'s City")
                         </MudButton>
                     }
@@ -27,12 +27,12 @@
             <MudGrid>
                 <MudItem>
                     <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 mud-theme-secondary">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
                             @jt["FirstName"].ToString()
                         </MudButton>
                         @if(@jt["City"] != null)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
                                 @(jt["FirstName"].ToString() + "'s City")
                             </MudButton>
                         }
@@ -46,4 +46,18 @@
 @code {
     [Parameter]
     public JToken? previewModel { get; set; }
+
+    [Parameter]
+    public string state { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> OnChildClick { get; set; }
+
+    private string FirstNameEnum = "FirstName";
+
+    private async Task HandleClick()
+    {
+        // Pass a string value to the parent component
+        await OnChildClick.InvokeAsync(state);
+    }
 }

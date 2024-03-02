@@ -51,7 +51,7 @@
             }
             else
             {
-                <Preview previewModel="@GetPreviewJToken(item.Text)"/>
+                <Preview state="@item.Text" previewModel="@GetPreviewJToken(item.Text)" OnChildClick="HandleChildClick"/>
             }
         </MudExpansionPanel>
     }
@@ -205,5 +205,21 @@
         JObject jsonObject = JObject.Parse(jsonString);
 
         return jsonObject["root"][state];
+    }
+    private void HandleChildClick(string message)
+    {
+        // Logic to handle the click event in the parent component
+        foreach(PanelItem item in panelItems)
+        {
+            if(item.Text == message)
+            {
+                item.IsExpanded = true;
+            }
+            else
+            {
+                item.IsExpanded = false;
+            }
+        }
+        Console.WriteLine($"Child component clicked! Message: {message}");
     }
 }
