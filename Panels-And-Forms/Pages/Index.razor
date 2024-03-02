@@ -44,17 +44,14 @@
     @foreach (PanelItem item in panelItems)
     {
         <MudExpansionPanel Text="@item.Text" IsExpanded="@item.IsExpanded">
-            @if(item.ShowPreview)
+            @if(item.ShowForms)
             {
-                <span>Show Preview</span>
-            }
-            else if(item.ShowForms)
-            {
-                <span>Show Form</span>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => ShowPreview(item.Text)">Show Preview</MudButton>
+                <div>Show Form</div>
             }
             else
             {
-                <span>Edge Case</span>
+                <div>Show Preview</div>
             }
         </MudExpansionPanel>
     }
@@ -71,7 +68,6 @@
     {
         public string Text { get; set; } = "";
         public bool IsExpanded { get; set; } = false;
-        public bool ShowPreview { get; set; } = false;
         public bool ShowForms { get; set; } = false;
     }
 
@@ -168,13 +164,11 @@
             if(item.Text != state)
             {
                 item.IsExpanded = false;
-                item.ShowPreview = false;
                 item.ShowForms = false;
             }
             else
             {
-                item.IsExpanded = true;
-                item.ShowPreview = true;
+                item.IsExpanded = !item.IsExpanded;
                 item.ShowForms = false;
             }
         }
@@ -186,13 +180,27 @@
             if(name.Contains(item.Text))
             {
                 item.IsExpanded = true;
-                item.ShowPreview = false;
                 item.ShowForms = true;
             }
             else
             {
                 item.IsExpanded = false;
-                item.ShowPreview = false;
+                item.ShowForms = false;
+            }
+        }
+    }
+
+    private void ShowPreview(string headerText)
+    {
+        foreach(PanelItem item in panelItems)
+        {
+            if(item.Text != headerText)
+            {
+                item.IsExpanded = false;
+            }
+            else
+            {
+                item.IsExpanded = true;
                 item.ShowForms = false;
             }
         }
