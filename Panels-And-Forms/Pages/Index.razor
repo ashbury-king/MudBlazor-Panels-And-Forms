@@ -19,6 +19,26 @@
         </MudButton>
     }
     <hr />
+    @foreach(string firstName in firstNamesFromXml)
+    {
+        <MudButton
+            Variant="Variant.Filled"
+            Color="Color.Warning"
+        >
+            @firstName
+        </MudButton>
+    }
+    <hr />
+    @foreach(string city in citiesFromXml)
+    {
+        <MudButton
+            Variant="Variant.Filled"
+            Color="Color.Info"
+        >
+            @city
+        </MudButton>
+    }
+    <hr />
     @foreach (PanelItem item in panelItems)
     {
         <MudExpansionPanel Text="@item.Text" IsExpanded="@item.IsExpanded">
@@ -44,6 +64,8 @@
     }
 
     private List<string> statesFromXml { get; set; } = new();
+    private List<string> firstNamesFromXml { get; set; } = new();
+    private List<string> citiesFromXml { get; set; } = new();
 
     protected override void OnInitialized()
     {
@@ -53,6 +75,13 @@
         // Convert XML to JSON
         jsonString = JsonConvert.SerializeXNode(xmlDoc);
 
+        GetStates();
+        GetFirstNames();
+        GetCities();
+    }
+
+    private void GetStates()
+    {
         JObject jsonObject = JObject.Parse(jsonString);
 
         JObject rootObject = (JObject)jsonObject["root"];
@@ -69,6 +98,56 @@
         }
     }
 
+    private void GetFirstNames()
+    {
+        JObject jsonObject = JObject.Parse(jsonString);
+
+        JObject rootObject = (JObject)jsonObject["root"];
+
+        foreach (var state in rootObject)
+        {
+            if (state.Value is JArray)
+            {
+                foreach (var person in state.Value)
+                {
+                    firstNamesFromXml.Add(state.Key + " + " + person["FirstName"].ToString());
+                }
+            }
+            else
+            {
+                firstNamesFromXml.Add(state.Key + " + " + state.Value["FirstName"].ToString());
+            }
+        }
+    }
+
+    private void GetCities()
+    {
+        JObject jsonObject = JObject.Parse(jsonString);
+
+        JObject rootObject = (JObject)jsonObject["root"];
+
+        foreach (var state in rootObject)
+        {
+            if (state.Value is JArray)
+            {
+                foreach (var person in state.Value)
+                {
+                    if(person["City"] != null)
+                    {
+                        citiesFromXml.Add(state.Key + " + " + person["City"]["Name"].ToString());
+                    }
+                    
+                }
+            }
+            else
+            {
+                if(state.Value["City"] != null)
+                {
+                    citiesFromXml.Add(state.Key + " + " + state.Value["City"]["Name"].ToString());
+                }
+            }
+        }
+    }
 
     private List<PanelItem> panelItems { get; set; } = new();
 
