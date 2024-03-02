@@ -51,7 +51,7 @@
             }
             else
             {
-                <div>Show Preview</div>
+                <Preview previewModel="@GetPreviewJToken(item.Text)"/>
             }
         </MudExpansionPanel>
     }
@@ -70,7 +70,6 @@
         public bool IsExpanded { get; set; } = false;
         public bool ShowForms { get; set; } = false;
     }
-
     private List<string> statesFromXml { get; set; } = new();
     private List<string> firstNamesFromXml { get; set; } = new();
     private List<string> citiesFromXml { get; set; } = new();
@@ -88,7 +87,6 @@
         GetFirstNames();
         GetCities();
     }
-
     private void GetStates()
     {
         JObject jsonObject = JObject.Parse(jsonString);
@@ -106,7 +104,6 @@
             );
         }
     }
-
     private void GetFirstNames()
     {
         JObject jsonObject = JObject.Parse(jsonString);
@@ -128,7 +125,6 @@
             }
         }
     }
-
     private void GetCities()
     {
         JObject jsonObject = JObject.Parse(jsonString);
@@ -189,7 +185,6 @@
             }
         }
     }
-
     private void ShowPreview(string headerText)
     {
         foreach(PanelItem item in panelItems)
@@ -204,5 +199,11 @@
                 item.ShowForms = false;
             }
         }
+    }
+    private JToken? GetPreviewJToken(string state)
+    {
+        JObject jsonObject = JObject.Parse(jsonString);
+
+        return jsonObject["root"][state];
     }
 }
