@@ -1,7 +1,53 @@
 ﻿@page "/"
 
-<PageTitle>Three Diamonds</PageTitle>
+@using System.Linq
+@using Panels_And_Forms.Services
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
-<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink></MudAlert>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mud-theme-secondary">
+    <MudButton Variant="Variant.Filled" OnClick="() => StateClick(EnumExtensions.GetDescription(MyEnum.Alabama))">@EnumExtensions.GetDescription(MyEnum.Alabama)</MudButton>
+    <MudButton Variant="Variant.Filled" OnClick="() => StateClick(EnumExtensions.GetDescription(MyEnum.Illinois))">@EnumExtensions.GetDescription(MyEnum.Illinois)</MudButton>
+    <hr />
+    <MudButton Variant="Variant.Filled">Alice</MudButton>
+    <MudButton Variant="Variant.Filled">Bob</MudButton>
+    <MudButton Variant="Variant.Filled">Jane</MudButton>
+    <hr />
+    <MudButton Variant="Variant.Filled">Alice City</MudButton>
+    <MudButton Variant="Variant.Filled">Bob City</MudButton>
+    <MudButton Variant="Variant.Filled">Jane City</MudButton>
+    @foreach (PanelItem item in panelItems)
+    {
+        <MudExpansionPanel Text="@item.Text" IsExpanded="@item.IsExpanded">
+            @item.Content
+        </MudExpansionPanel>
+    }
+</MudContainer>
+
+@code {
+    public class PanelItem
+    {
+        public string Text { get; set; } = "";
+        public bool IsExpanded { get; set; }
+        public string Content { get; set; } = "";
+    }
+
+    private List<PanelItem> panelItems { get; set; } = new List<PanelItem>
+    {
+        new PanelItem { Text = EnumExtensions.GetDescription(MyEnum.Alabama), IsExpanded = false, Content = $"Panel 1 Content", },
+        new PanelItem { Text = EnumExtensions.GetDescription(MyEnum.Illinois), IsExpanded = false, Content = $"Panel 2 Content", },
+    };
+
+    private void StateClick(string state)
+    {
+        foreach(PanelItem item in panelItems)
+        {
+            if(item.Text != state)
+            {
+                item.IsExpanded = false;
+            }
+            else
+            {
+                item.IsExpanded = !item.IsExpanded;
+            }
+        }
+    }
+}
