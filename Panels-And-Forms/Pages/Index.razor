@@ -42,7 +42,18 @@
     @foreach (PanelItem item in panelItems)
     {
         <MudExpansionPanel Text="@item.Text" IsExpanded="@item.IsExpanded">
-            @item.Content
+            @if(item.ShowPreview)
+            {
+                <span>Show Preview</span>
+            }
+            else if(item.ShowForms)
+            {
+                <span>Show Form</span>
+            }
+            else
+            {
+                <span>Edge Case</span>
+            }
         </MudExpansionPanel>
     }
 </MudContainer>
@@ -58,7 +69,6 @@
     {
         public string Text { get; set; } = "";
         public bool IsExpanded { get; set; } = false;
-        public string Content { get; set; } = "";
         public bool ShowPreview { get; set; } = false;
         public bool ShowForms { get; set; } = false;
     }
@@ -66,6 +76,7 @@
     private List<string> statesFromXml { get; set; } = new();
     private List<string> firstNamesFromXml { get; set; } = new();
     private List<string> citiesFromXml { get; set; } = new();
+    private List<PanelItem> panelItems { get; set; } = new();
 
     protected override void OnInitialized()
     {
@@ -93,7 +104,7 @@
         {
             statesFromXml.Add(state.Key);
             panelItems.Add(
-                new PanelItem { Text = state.Key, Content = $"{state.Key} Content", }
+                new PanelItem { Text = state.Key, }
             );
         }
     }
@@ -149,7 +160,7 @@
         }
     }
 
-    private List<PanelItem> panelItems { get; set; } = new();
+    
 
     private void StateClick(string state)
     {
@@ -158,10 +169,17 @@
             if(item.Text != state)
             {
                 item.IsExpanded = false;
+                item.ShowPreview = false;
+                item.ShowForms = false;
             }
             else
             {
                 item.IsExpanded = !item.IsExpanded;
+                if(item.IsExpanded)
+                {
+                    item.ShowPreview = true;
+                }
+                item.ShowForms = false;
             }
         }
     }
