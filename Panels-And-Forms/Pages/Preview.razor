@@ -7,12 +7,12 @@
         <MudGrid>
             <MudItem>
                 <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 mud-theme-secondary">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => HandleClick(previewModel[FirstNameEnum].ToString())">
                         @previewModel["FirstName"].ToString()
                     </MudButton>
-                    @if(@previewModel["City"] != null)
+                    @if(@previewModel["City"] != null && @previewModel["City"]["Name"] != null)
                     {
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => HandleClick(previewModel[FirstNameEnum].ToString(), previewModel[CityEnum][CityNameEnum].ToString())">
                             @(previewModel["FirstName"].ToString() + "'s City")
                         </MudButton>
                     }
@@ -27,12 +27,12 @@
             <MudGrid>
                 <MudItem>
                     <MudPaper Class="d-flex align-center justify-center mud-width-full py-8 mud-theme-secondary">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => HandleClick(jt[FirstNameEnum].ToString())">
                             @jt["FirstName"].ToString()
                         </MudButton>
-                        @if(@jt["City"] != null)
+                        @if(@jt["City"] != null && @jt["City"]["Name"] != null)
                         {
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleClick">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => HandleClick(jt[FirstNameEnum].ToString(), jt[CityEnum][CityNameEnum].ToString())">
                                 @(jt["FirstName"].ToString() + "'s City")
                             </MudButton>
                         }
@@ -54,10 +54,12 @@
     public EventCallback<string> OnChildClick { get; set; }
 
     private string FirstNameEnum = "FirstName";
+    private string CityEnum = "City";
+    private string CityNameEnum = "Name";
 
-    private async Task HandleClick()
+    private async Task HandleClick(string? name = null, string? city = null)
     {
         // Pass a string value to the parent component
-        await OnChildClick.InvokeAsync(state);
+        await OnChildClick.InvokeAsync(state + " " + name + " " + city);
     }
 }

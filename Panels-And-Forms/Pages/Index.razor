@@ -211,7 +211,7 @@
         // Logic to handle the click event in the parent component
         foreach(PanelItem item in panelItems)
         {
-            if(item.Text == message)
+            if(message.Contains(item.Text))
             {
                 item.IsExpanded = true;
             }
