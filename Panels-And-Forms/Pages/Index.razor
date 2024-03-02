@@ -24,6 +24,7 @@
         <MudButton
             Variant="Variant.Filled"
             Color="Color.Warning"
+            OnClick="() => IdentifierClick(firstName)"
         >
             @firstName
         </MudButton>
@@ -34,6 +35,7 @@
         <MudButton
             Variant="Variant.Filled"
             Color="Color.Info"
+            OnClick="() => IdentifierClick(city)"
         >
             @city
         </MudButton>
@@ -159,9 +161,6 @@
             }
         }
     }
-
-    
-
     private void StateClick(string state)
     {
         foreach(PanelItem item in panelItems)
@@ -174,11 +173,26 @@
             }
             else
             {
-                item.IsExpanded = !item.IsExpanded;
-                if(item.IsExpanded)
-                {
-                    item.ShowPreview = true;
-                }
+                item.IsExpanded = true;
+                item.ShowPreview = true;
+                item.ShowForms = false;
+            }
+        }
+    }
+    private void IdentifierClick(string name)
+    {
+        foreach(PanelItem item in panelItems)
+        {
+            if(name.Contains(item.Text))
+            {
+                item.IsExpanded = true;
+                item.ShowPreview = false;
+                item.ShowForms = true;
+            }
+            else
+            {
+                item.IsExpanded = false;
+                item.ShowPreview = false;
                 item.ShowForms = false;
             }
         }
