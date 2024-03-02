@@ -214,10 +214,12 @@
             if(message.Contains(item.Text))
             {
                 item.IsExpanded = true;
+                item.ShowForms = true;
             }
             else
             {
                 item.IsExpanded = false;
+                item.ShowForms = false;
             }
         }
         Console.WriteLine($"Child component clicked! Message: {message}");
