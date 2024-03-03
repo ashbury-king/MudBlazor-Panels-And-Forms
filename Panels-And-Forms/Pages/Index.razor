@@ -20,18 +20,18 @@
         </MudButton>
     }
     <hr />
-    @foreach(string firstName in firstNamesFromXml)
+    @foreach(FirstNameTreeDiagramButton buttonInfo in firstNamesFromXml)
     {
         <MudButton
             Variant="Variant.Filled"
             Color="Color.Warning"
-            OnClick="() => IdentifierClick(firstName)"
+            OnClick="() => IdentifierClick(buttonInfo)"
         >
-            @firstName
+            @(buttonInfo.state + " + " + buttonInfo.name)
         </MudButton>
     }
     <hr />
-    @foreach(string city in citiesFromXml)
+    @* @foreach(string city in citiesFromXml)
     {
         <MudButton
             Variant="Variant.Filled"
@@ -41,27 +41,34 @@
             @city
         </MudButton>
     }
-    <hr />
+    <hr /> *@
     @foreach (PanelItem item in panelItems)
     {
         <MudExpansionPanel Text="@item.Text" IsExpanded="@item.IsExpanded">
             @if(item.ShowForms)
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => ShowPreview(item.Text)">Show Preview</MudButton>
-                <div>Show Form</div>
                 <FormController
                     xmlString="@xmlString"
                     showForms="item.ShowForms"
                     previewClickInformation="previewClickInformation"
+                    OnFormSave="HandleSave"
                 />
             }
             else
             {
-                <Preview state="@item.Text" previewModel="@GetPreviewJToken(item.Text)" OnChildClick="HandleChildClick"/>
+                <Preview
+                    state="@item.Text"
+                    previewModel="@GetPreviewJToken(item.Text)"
+                    OnChildClick="HandleChildClick"
+                />
             }
         </MudExpansionPanel>
     }
 </MudContainer>
+
+@* <div>@xmlString</div>
+<div>@jsonString</div> *@
 
 @code {
     private string jsonString { get; set; } = "";
@@ -73,10 +80,16 @@
         public bool ShowForms { get; set; } = false;
     }
     private List<string> statesFromXml { get; set; } = new();
-    private List<string> firstNamesFromXml { get; set; } = new();
+    private List<FirstNameTreeDiagramButton> firstNamesFromXml { get; set; } = new();
     private List<string> citiesFromXml { get; set; } = new();
     private List<PanelItem> panelItems { get; set; } = new();
     private PreviewClickInformation previewClickInformation { get; set; } = new();
+
+    public class FirstNameTreeDiagramButton
+    {
+        public string state { get; set; } = "";
+        public string name { get; set; } = "";
+    }
 
     protected override void OnInitialized()
     {
@@ -109,6 +122,7 @@
     }
     private void GetFirstNames()
     {
+        firstNamesFromXml = new();
         JObject jsonObject = JObject.Parse(jsonString);
 
         JObject rootObject = (JObject)jsonObject["root"];
@@ -119,12 +133,18 @@
             {
                 foreach (var person in state.Value)
                 {
-                    firstNamesFromXml.Add(state.Key + " + " + person["FirstName"].ToString());
+                    firstNamesFromXml.Add(
+                        new FirstNameTreeDiagramButton(){state = state.Key, name = person["FirstName"].ToString()}
+                    );
+                    @* firstNamesFromXml.Add(state.Key + " + " + person["FirstName"].ToString()); *@
                 }
             }
             else
             {
-                firstNamesFromXml.Add(state.Key + " + " + state.Value["FirstName"].ToString());
+                firstNamesFromXml.Add(
+                        new FirstNameTreeDiagramButton(){state = state.Key, name = state.Value["FirstName"].ToString()}
+                    );
+                @* firstNamesFromXml.Add(state.Key + " + " + state.Value["FirstName"].ToString()); *@
             }
         }
     }
@@ -172,11 +192,12 @@
             }
         }
     }
-    private void IdentifierClick(string name)
+    private void IdentifierClick(FirstNameTreeDiagramButton buttonInfo)
     {
+        previewClickInformation = new(){State = buttonInfo.state, FirstName = buttonInfo.name, City = null};
         foreach(PanelItem item in panelItems)
         {
-            if(name.Contains(item.Text))
+            if(buttonInfo.state.Contains(item.Text))
             {
                 item.IsExpanded = true;
                 item.ShowForms = true;
@@ -227,5 +248,30 @@
         }
         previewClickInformation = info;
         Console.WriteLine($"Child component clicked! Message: {info.State} | {info.FirstName} | {info.City}");
+    }
+
+    private void HandleSave(string message)
+    {
+        xmlString = message;
+        // Load XML string into XDocument
+        XDocument xmlDoc = XDocument.Parse(xmlString);
+
+        // Convert XML to JSON
+        jsonString = JsonConvert.SerializeXNode(xmlDoc);
+        GetStates();
+        GetFirstNames();
+        foreach(PanelItem item in panelItems)
+        {
+            if(previewClickInformation.State.Contains(item.Text))
+            {
+                item.IsExpanded = true;
+                item.ShowForms = true;
+            }
+            else
+            {
+                item.IsExpanded = false;
+                item.ShowForms = false;
+            }
+        }
     }
 }

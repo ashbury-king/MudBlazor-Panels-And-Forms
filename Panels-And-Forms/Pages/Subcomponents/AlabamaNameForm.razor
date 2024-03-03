@@ -18,6 +18,8 @@
 
 @code {
     [Parameter]
+    public EventCallback<string> OnFormSave { get; set; }
+    [Parameter]
     public PreviewClickInformation previewClickInformation { get; set; } = new();
     [Parameter]
     public string? xmlString { get; set; }
@@ -65,7 +67,7 @@
         }
     }
 
-    private void HandleFormSubmit()
+    private async Task HandleFormSubmit()
     {
         // Convert MyClass instance to JObject
         JObject jObject = classModel.ToJObject();
@@ -89,7 +91,7 @@
             // Replace the old node with the new one
             firstAlabamaNode.ParentNode.ReplaceChild(fragment, firstAlabamaNode);
 
-            Console.WriteLine(xmlDoc.OuterXml);
+            await OnFormSave.InvokeAsync(xmlDoc.OuterXml);
         }
     }
 }

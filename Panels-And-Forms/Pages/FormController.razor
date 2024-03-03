@@ -9,7 +9,11 @@
         @switch (previewClickInformation.State)
         {
             case "Alabama":
-                <AlabamaNameForm previewClickInformation="@previewClickInformation" xmlString="@xmlString" />
+                <AlabamaNameForm
+                    previewClickInformation="@previewClickInformation"
+                    xmlString="@xmlString"
+                    OnFormSave="@OnFormSave"
+                />
                 break;
             case "Florida":
                 <FloridaNameForm />
@@ -53,4 +57,6 @@ else
     public bool showForms { get; set; } = true;
     [Parameter]
     public string? xmlString { get; set; }
+    [Parameter]
+    public EventCallback<string> OnFormSave { get; set; }
 }
