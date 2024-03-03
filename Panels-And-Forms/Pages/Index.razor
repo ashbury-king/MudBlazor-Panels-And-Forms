@@ -49,6 +49,7 @@
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => ShowPreview(item.Text)">Show Preview</MudButton>
                 <div>Show Form</div>
+                <FormController showForms="item.ShowForms" previewClickInformation="previewClickInformation"/>
             }
             else
             {
@@ -75,6 +76,7 @@
     private List<string> firstNamesFromXml { get; set; } = new();
     private List<string> citiesFromXml { get; set; } = new();
     private List<PanelItem> panelItems { get; set; } = new();
+    private PreviewClickInformation previewClickInformation { get; set; } = new();
 
     protected override void OnInitialized()
     {
@@ -223,6 +225,7 @@
                 item.ShowForms = false;
             }
         }
+        previewClickInformation = info;
         Console.WriteLine($"Child component clicked! Message: {info.State} | {info.FirstName} | {info.City}");
     }
 }

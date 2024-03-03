@@ -1,0 +1,52 @@
+@using Panels_And_Forms.Models
+
+@if(showForms)
+{
+    @if(previewClickInformation.City == null && previewClickInformation.State != "")
+    {
+        @switch (previewClickInformation.State)
+        {
+            case "Alabama":
+                <p>This is Alabama.</p>
+                break;
+            case "Florida":
+                <p>This is Florida.</p>
+                break;
+            case "Illinois":
+                <p>This is Illinois.</p>
+                break;
+            default:
+                <div></div>
+                break;
+        }
+    }
+    else if(previewClickInformation.City != null && previewClickInformation.State != "")
+    {
+        @switch (previewClickInformation.State)
+        {
+            case "Alabama":
+                <p>This is an Alabama City - @previewClickInformation.City</p>
+                break;
+            case "Florida":
+                <p>This is a Florida City. - @previewClickInformation.City</p>
+                break;
+            case "Illinois":
+                <p>This is a Illinois City. - @previewClickInformation.City</p>
+                break;
+            default:
+                <div></div>
+                break;
+        }
+    }
+}
+else
+{
+    <div></div>
+}
+
+@code{
+    [Parameter]
+    public PreviewClickInformation previewClickInformation { get; set; } = new();
+    [Parameter]
+    public bool showForms { get; set; } = true;
+}
