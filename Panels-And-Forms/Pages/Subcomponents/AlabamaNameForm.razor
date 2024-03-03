@@ -1,36 +1,95 @@
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using System.Xml
+@using System.Xml.Linq
+@using Panels_And_Forms.Models
 
 @namespace Panels_And_Forms.Pages.Subcomponents
 
-<MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField T="string" Label="First Name" Required="true" RequiredError="User name is required!" />
-            </MudForm>   
-        </MudPaper>
-        <MudPaper Class="pa-4 mt-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.ResetAsync())" Class="mx-2">Reset</MudButton>
-            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" sm="5">
-        <MudPaper Class="pa-4 mud-height-full">
-            <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
-                @foreach (var error in errors)
-                {
-                    <MudText Color="@Color.Error">@error</MudText>
-                }
-        </MudPaper>
-    </MudItem>
-</MudGrid>
-
+@if (classModel != null)
+{
+    <EditForm Model="@classModel" OnValidSubmit="HandleFormSubmit">
+        <InputText @bind-Value="classModel.FirstName" />
+        <button type="submit">Submit</button>
+    </EditForm>
+}
 
 @code {
-    bool success;
-    string[] errors = { };
-    MudTextField<string> pwField1;
-    MudForm form;
+    [Parameter]
+    public PreviewClickInformation previewClickInformation { get; set; } = new();
+    [Parameter]
+    public string? xmlString { get; set; }
+
+    public string? xmlSubString { get; set; }
+    private JObject? jObjectModel { get; set; }
+    private AlabamaNameFormModel? classModel { get; set; }
+    public class AlabamaNameFormModel
+    {
+        public string FirstName { get; set; } = "";
+        public string MiddleName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public CityNameFormMode? City { get; set; }
+        public JObject ToJObject()
+        {
+            return JObject.FromObject(this);
+        }
+    }
+    public class CityNameFormMode
+    {
+        public string Name { get; set; } = "";
+        public string AreaCode { get; set; } = "";
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if(xmlString != null && xmlString.Length > 0)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xmlString);
+
+            XmlNodeList alabamaNodes = xmlDoc.SelectNodes("//Alabama[FirstName='" + previewClickInformation.FirstName + "']");
+            XmlNode firstAlabamaNode = alabamaNodes.Cast<XmlNode>().FirstOrDefault();
+            if (firstAlabamaNode != null)
+            {
+                xmlSubString = (firstAlabamaNode.OuterXml);
+                jObjectModel = JObject.Parse(JsonConvert.SerializeXNode(XDocument.Parse(xmlSubString).Root));
+                classModel = jObjectModel["Alabama"].ToObject<AlabamaNameFormModel>();
+            }
+            else
+            {
+                xmlSubString = ("No matching node found.");
+            }
+        }
+    }
+
+    private void HandleFormSubmit()
+    {
+        // Convert MyClass instance to JObject
+        JObject jObject = classModel.ToJObject();
+
+        // Convert JSON to XML
+        XDocument? updatedXml = JsonConvert.DeserializeXNode(jObject.ToString(), "Alabama");
+
+        if(updatedXml != null)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xmlString);
+
+            // Select the specific node to replace
+            XmlNodeList alabamaNodes = xmlDoc.SelectNodes("//Alabama[FirstName='" + previewClickInformation.FirstName + "']");
+            XmlNode firstAlabamaNode = alabamaNodes.Cast<XmlNode>().FirstOrDefault();
+
+            // Create a new node from the replacement XML
+            XmlDocumentFragment fragment = xmlDoc.CreateDocumentFragment();
+            fragment.InnerXml = updatedXml.ToString();
+
+            // Replace the old node with the new one
+            firstAlabamaNode.ParentNode.ReplaceChild(fragment, firstAlabamaNode);
+
+            Console.WriteLine(xmlDoc.OuterXml);
+        }
+    }
 }

@@ -49,7 +49,11 @@
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => ShowPreview(item.Text)">Show Preview</MudButton>
                 <div>Show Form</div>
-                <FormController showForms="item.ShowForms" previewClickInformation="previewClickInformation"/>
+                <FormController
+                    xmlString="@xmlString"
+                    showForms="item.ShowForms"
+                    previewClickInformation="previewClickInformation"
+                />
             }
             else
             {
@@ -58,10 +62,6 @@
         </MudExpansionPanel>
     }
 </MudContainer>
-
-@xmlString
-<hr />
-@jsonString
 
 @code {
     private string jsonString { get; set; } = "";

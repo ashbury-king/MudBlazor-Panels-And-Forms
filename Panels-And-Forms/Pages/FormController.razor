@@ -1,5 +1,6 @@
 @using Panels_And_Forms.Models
 @using Panels_And_Forms.Pages.Subcomponents
+@using Panels_And_Forms.Models
 
 @if(showForms)
 {
@@ -8,7 +9,7 @@
         @switch (previewClickInformation.State)
         {
             case "Alabama":
-                <FauxForm2 />
+                <AlabamaNameForm previewClickInformation="@previewClickInformation" xmlString="@xmlString" />
                 break;
             case "Florida":
                 <FloridaNameForm />
@@ -50,4 +51,6 @@ else
     public PreviewClickInformation previewClickInformation { get; set; } = new();
     [Parameter]
     public bool showForms { get; set; } = true;
+    [Parameter]
+    public string? xmlString { get; set; }
 }
