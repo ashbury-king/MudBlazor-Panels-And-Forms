@@ -1,4 +1,5 @@
 @using Newtonsoft.Json.Linq
+@using Panels_And_Forms.Models
 
 @if (previewModel != null)
 {
@@ -51,15 +52,17 @@
     public string state { get; set; } = "";
 
     [Parameter]
-    public EventCallback<string> OnChildClick { get; set; }
+    public EventCallback<PreviewClickInformation> OnChildClick { get; set; }
 
     private string FirstNameEnum = "FirstName";
     private string CityEnum = "City";
     private string CityNameEnum = "Name";
 
-    private async Task HandleClick(string? name = null, string? city = null)
+    private async Task HandleClick(string name, string? city = null)
     {
         // Pass a string value to the parent component
-        await OnChildClick.InvokeAsync(state + " " + name + " " + city);
+        PreviewClickInformation info = new(){State = state, FirstName = name, City = city};
+        @* await OnChildClick.InvokeAsync(state + " " + name + " " + city); *@
+        await OnChildClick.InvokeAsync(info);
     }
 }

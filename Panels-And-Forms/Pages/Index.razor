@@ -6,6 +6,7 @@
 @using System.Xml
 @using System.Xml.Linq
 @using Panels_And_Forms.Services
+@using Panels_And_Forms.Models
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mud-theme-secondary">
     @foreach(string state in statesFromXml)
@@ -206,12 +207,12 @@
 
         return jsonObject["root"][state];
     }
-    private void HandleChildClick(string message)
+    private void HandleChildClick(PreviewClickInformation info)
     {
         // Logic to handle the click event in the parent component
         foreach(PanelItem item in panelItems)
         {
-            if(message.Contains(item.Text))
+            if(info.State == item.Text)
             {
                 item.IsExpanded = true;
                 item.ShowForms = true;
@@ -222,6 +223,6 @@
                 item.ShowForms = false;
             }
         }
-        Console.WriteLine($"Child component clicked! Message: {message}");
+        Console.WriteLine($"Child component clicked! Message: {info.State} | {info.FirstName} | {info.City}");
     }
 }
