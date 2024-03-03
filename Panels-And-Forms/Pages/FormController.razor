@@ -1,4 +1,5 @@
 @using Panels_And_Forms.Models
+@using Panels_And_Forms.Pages.Subcomponents
 
 @if(showForms)
 {
@@ -7,13 +8,13 @@
         @switch (previewClickInformation.State)
         {
             case "Alabama":
-                <p>This is Alabama.</p>
+                <AlabamaNameForm />
                 break;
             case "Florida":
-                <p>This is Florida.</p>
+                <FloridaNameForm />
                 break;
             case "Illinois":
-                <p>This is Illinois.</p>
+                <IllinoisNameForm />
                 break;
             default:
                 <div></div>
